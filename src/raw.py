@@ -1,6 +1,7 @@
 """Utilities for working with raw data.
 """
 import pandas as pd
+import re
 from src import utils
 import zipfile
 
@@ -22,4 +23,22 @@ def donations(*args, **kwargs):
     """
     io = zipfile.ZipFile(PATH)
     with io.open("Donations.csv") as f:
-        return pd.read_csv(f, *args, **kwargs)
+        return (pd.read_csv(f, *args, **kwargs)
+                  .rename(columns=snake_case))
+
+
+def snake_case(string):
+    """Convert a string to snake case.
+
+    This function replaces consecutive non-alphanumeric characters with a single
+    underscore, and it replaces uppercase letters with lowercase letters.
+
+    For example, "Hello, world!" becomes "hello_world_"
+
+    Args:
+        string (str): A string to convert.
+
+    Returns:
+        str: A converted string.
+    """
+    return re.sub("[^a-z0-9]+", "_", string.lower())
