@@ -21,10 +21,19 @@ def donations(*args, **kwargs):
         Raw donation data.
 
     """
+    parse_dates = ["Donation Received Date"]
+
+    # Read zipped CSV.
     io = zipfile.ZipFile(PATH)
     with io.open("Donations.csv") as f:
-        return (pd.read_csv(f, *args, **kwargs)
-                  .rename(columns=snake_case))
+        df = (pd.read_csv(f, parse_dates=parse_dates, *args, **kwargs)
+                .rename(columns=snake_case))
+
+    # Recode "Yes" and "No" as bool.
+    optional = "donation_included_optional_donation"
+    df[optional] = df[optional] == "Yes"
+
+    return df
 
 
 def snake_case(string):
