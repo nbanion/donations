@@ -36,6 +36,29 @@ def donations(*args, **kwargs):
     return df
 
 
+def donors(*args, **kwargs):
+    """Read raw donor data.
+
+    Args:
+        args: Positional arguments for ``pandas.read_csv``.
+        kwargs: Keyword arguments for ``pandas.read_csv``.
+
+    Returns:
+        Raw donor data.
+
+    """
+    # Read zipped CSV.
+    io = zipfile.ZipFile(PATH)
+    with io.open("Donors.csv") as f:
+        df = (pd.read_csv(f, *args, **kwargs)
+                .rename(columns=snake_case))
+
+    # Recode "Yes" and "No" as bool.
+    df.donor_is_teacher = df.donor_is_teacher == "Yes"
+
+    return df
+
+
 def snake_case(string):
     """Convert a string to snake case.
 
